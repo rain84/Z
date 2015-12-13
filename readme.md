@@ -1,6 +1,8 @@
 # Async-tiny
 
-##### A very tiny helper for working with Promise-workflow, which works around native "Promise"-object and which can help to work with async stuff and promises in more simple way. You should only receive "defer"-argument in your custom async functions , and invoke "resolve" or "reject" on it.
+>  **_[Async-tiny](https://github.com/rain84/async-tiny)_** is a very tiny helper for working with Promise-workflow, which works around native "Promise"-object and which can help to work with async stuff and promises in more simple way. You should only receive "defer"-argument in your custom async functions , and invoke "resolve" or "reject" on it.
+
+*Issues should be reported on the async-tiny [issue tracker](https://github.com/rain84/async-tiny/issues).*
 
 ##### Your typical async-workflow will be looking like this
 
@@ -35,9 +37,20 @@
 
 ---------------------------------------------
 
-##### **Methods :**
-1. `async(fn)`
-2. `asyncBundle([fn1, fn2, fn3, ...])`
+##### **API**
+**async(fn)**
+
+   Type: *Function*
+   
+   Return: *Promise*
+   
+   Wrapper for single async-function to work in async-workflow.
+
+**asyncBundle([fn1, fn2, fn3, ...])**
+:   Type: *Array*
+:   Return: *Promise*
+:   Wrapper for array of async-functions to work in async-workflow, 
+:   Every async-function will be invoked in expected order of array.
 
 ---------------------------------------------
 
