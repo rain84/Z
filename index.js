@@ -8,35 +8,58 @@
 'use strict';
 
 
+function promiseWrapper( action ) {
+	var promise = this.then ? this.then( action ) : action();
+	extend( promise, asyncTiny );
+
+	return promise;
+}
+function bind( fn ) {
+	var args = Array.prototype.slice.apply( arguments );
+	args.shift();
+	return function () { return fn.apply( null, args );};
+}
+function extend( obj, mixin ) {
+	for ( var prop in mixin ) {
+		if ( mixin.hasOwnProperty( prop ) ) {
+			obj[prop] = mixin[prop];
+		}
+	}
+	return obj;
+}
+
+
+function asyncBundle( a ) {
+	return a.reduce( function ( sequence, fn ) {
+		return sequence.then( function () {
+			return async( fn );
+		} );
+	}, Promise.resolve() );
+}
+
+/**
+ * Promise-decorator for async function
+ * @param fn
+ * @returns {Function}
+ */
+function async( fn ) {
+	var defer = Promise.defer();
+	fn( defer );
+
+	return defer.promise;
+}
+
 //noinspection JSUnusedGlobalSymbols
 var asyncTiny = {
-	/**
-	 *
-	 * @param {Array}
-	 * @returns {Promise}
-	 */
-	syncArray : function ( a ) {
-		var self = this;
-		return a.reduce( function ( sequence, fn ) {
-			return sequence.then( function () {
-				return self.async( fn )();
-			} );
-		}, Promise.resolve() );
+	asyncBundle : function ( a ) {
+		return promiseWrapper.call( this, bind( asyncBundle, a ) );
 	},
 
-	/**
-	 * Promise-decorator for async function
-	 * @param fn
-	 * @returns {Function}
-	 */
 	async : function ( fn ) {
-		return function () {
-			var defer = Promise.defer();
-			fn( defer );
-			return defer.promise;
-		};
+		return promiseWrapper.call( this, bind( async, fn ) );
 	}
 };
+extend( Promise.prototype, asyncTiny );
 
 //noinspection JSUnresolvedVariable
 module.exports = asyncTiny;
