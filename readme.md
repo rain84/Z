@@ -1,6 +1,8 @@
 # Async-tiny
 
->  **_[Async-tiny](https://github.com/rain84/async-tiny)_** is a very tiny helper plugin for working with Promise-workflow, which works around native "Promise"-object and which can help to work with async stuff and promises in more simple way. You should only receive "defer"-argument in your custom async functions , and invoke "resolve" or "reject" on it. For example, this plugin can be usefull, when you are working with GULP-tasks with a couple of dependencies, which should be executed in a certain way.
+>  [color=#cb3837]**_[Async-tiny](https://github.com/rain84/async-tiny)_**[/color] is a very tiny helper plugin for working with Promise-workflow, which works around native 
+"Promise"-object and 
+which can help to work with async stuff and promises in more simple way. You should only receive "defer"-argument in your custom async functions , and invoke "resolve" or "reject" on it. For example, this plugin can be usefull, when you are working with GULP-tasks with a couple of dependencies, which should be executed in a certain way.
 
 
 *Issues should be reported on the async-tiny [issue tracker](https://github.com/rain84/async-tiny/issues).*
