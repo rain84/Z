@@ -49,6 +49,7 @@
 ---------------------------------------------
 
 ##### **Example**
+    var async = require('async-tiny');
     
     //  Preparation of test functions
     function asyncFn1( defer ) {
