@@ -8,58 +8,62 @@
 'use strict';
 
 
-function promiseWrapper( action ) {
-	var promise = this.then ? this.then( action ) : action();
-	extend( promise, asyncTiny );
+var asyncTiny = (function () {
+	function promiseWrapper( action ) {
+		var promise = this && this.then
+			    ? this.then( action )
+			    : action()
+			;
+		//promise.asyncTiny = async;
+		//extend( promise, asyncTiny );
 
-	return promise;
-}
-function bind( fn ) {
-	var args = Array.prototype.slice.apply( arguments );
-	args.shift();
-	return function () { return fn.apply( null, args );};
-}
-function extend( obj, mixin ) {
-	for ( var prop in mixin ) {
-		if ( mixin.hasOwnProperty( prop ) ) {
-			obj[prop] = mixin[prop];
-		}
+		return promise;
 	}
-	return obj;
-}
 
-
-function asyncBundle( a ) {
-	return a.reduce( function ( sequence, fn ) {
-		return sequence.then( function () {
-			return async( fn );
-		} );
-	}, Promise.resolve() );
-}
-
-/**
- * Promise-decorator for async function
- * @param fn
- * @returns {Function}
- */
-function async( fn ) {
-	var defer = Promise.defer();
-	fn( defer );
-
-	return defer.promise;
-}
-
-//noinspection JSUnusedGlobalSymbols
-var asyncTiny = {
-	asyncBundle : function ( a ) {
-		return promiseWrapper.call( this, bind( asyncBundle, a ) );
-	},
-
-	async : function ( fn ) {
-		return promiseWrapper.call( this, bind( async, fn ) );
+	function bind( fn ) {
+		var args = Array.prototype.slice.apply( arguments );
+		args.shift();
+		return function () { return fn.apply( null, args );};
 	}
-};
-extend( Promise.prototype, asyncTiny );
 
-//noinspection JSUnresolvedVariable
+	function isArray( obj ) { return Object.prototype.toString.call( obj ) === "[object Array]"; }
+
+	function asyncBundle( a ) {
+		return a.reduce( function ( sequence, fn ) {
+			return sequence.then( function () {
+				return async( fn );
+			} );
+		}, Promise.resolve() );
+	}
+
+	/**
+	 * Promise-decorator for async function
+	 * @param fn
+	 * @returns {Function}
+	 */
+	function async( fn ) {
+		var defer = Promise.defer();
+		fn( defer );
+
+		return defer.promise;
+	}
+
+	/**
+	 *
+	 * @param arg
+	 * @returns {*}
+	 */
+	function asyncTiny( arg ) {
+		return promiseWrapper.call(
+			this,
+			bind( isArray( arg ) ? asyncBundle : async, arg )
+		);
+	}
+
+	Promise.prototype.async = asyncTiny;
+
+	return asyncTiny;
+}());
+
+
 module.exports = asyncTiny;

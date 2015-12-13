@@ -7,15 +7,14 @@
 
 ##### Your typical async-workflow will be looking like this
 
-    asyncTiny
-        .async( asyncFn1 )
+    async( asyncFn1 )
         .async( asyncFn2 )
         .then( ... )
         .catch( ... )
         
         .....
         
-        .asyncBundle( asyncTasks )
+        .async( multipleAsyncTasks )
         .then( ... )
     ;
 
@@ -39,28 +38,19 @@
 ---------------------------------------------
 
 ##### **API**
-**async(fn)**
+**async(arg)**
 
-   Type: *Function*
+   Param type: *Function|Array*
    
-   Return: *Promise*
+   Returns: *Promise*
    
-   Wrapper for single async-function to work in async-workflow.
-
-**asyncBundle([fn1, fn2, fn3, ...])**
-
-   Type: *Array*
-
-   Return: *Promise*
-
-   Wrapper for array of async-functions to work in async-workflow, 
-   Every async-function will be invoked in expected order of array.
+   Wrapper for async-function or array with async-functions to work in async-workflow. If the case of array passing,  every async-function will be invoked in expected order of array.
 
 ---------------------------------------------
 
-##### **Examples**
+##### **Example**
     
-    //  Preparation functions for testing
+    //  Preparation of test functions
     function asyncFn1( defer ) {
     	setTimeout( function () {
     		console.log( 'asyncFn-1' );
@@ -85,47 +75,20 @@
     		defer.resolve();
     	}, 500 );
     }
-    var tasks = [asyncTask1, asyncTask2,];
     
     
-    //  Example of ".async()" usage
-    function exampleAsync() {
-    	console.log( 'Example of ".async()" starts' );
+    console.log( 'Example starts' );
     
-    	asyncTiny
-    		.async( asyncFn1 )
-    		.async( asyncFn2 )
-    		.then( function () { console.log( 'Example of ".async()" done' ); } )
-    	;
-    }
+    async( asyncFn1 )
+    	.catch( function ( err ) { console.log( 'asyncFn1 err. %s', err ); } )
     
+    	.async( asyncFn2 )
+    	.then( function () { console.log( 'async done' );} )
     
-    //  Example of ".asyncBundle()" usage
-    function exampleAsyncBundle() {
-    	console.log( 'Example of ".asyncBundle()" starts' );
-    
-    	asyncTiny.asyncBundle( tasks )
-    		.then( function () { console.log( 'Example of ".asyncBundle()"  done' );} )
-    	;
-    }
-    
-    
-    //  Complex example
-    function exampleComplex() {
-    	console.log( 'Complex example starts' );
-    
-    	asyncTiny
-    		.async( asyncFn1 )
-    		.catch( function ( err ) { console.log( 'asyncFn1 err. %s', err ); } )
-    		.async( asyncFn2 )
-    		.then( function () { console.log( 'async done' );} )
-    
-    		.asyncBundle( tasks )
-    		.then( function () { console.log( 'Complex example done' ); } )
-    	;
-    }
-    
-    
-    //exampleAsync();
-    //exampleAsyncBundle();
-    exampleComplex();
+    	.async( [
+    		        asyncTask1,
+    		        asyncTask2,
+    	        ]
+    	)
+    	.then( function () { console.log( 'Example done' ); } )
+    ;
