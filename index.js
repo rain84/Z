@@ -10,17 +10,12 @@
 
 var asyncTiny = (function () {
 	function promiseWrapper( action ) {
-		var promise = this && this.then
-			    ? this.then( action )
-			    : action()
-			;
-		//promise.asyncTiny = async;
-		//extend( promise, asyncTiny );
-
-		return promise;
+		return this && this instanceof Promise
+			? this.then( action )
+			: action();
 	}
 
-	function bind( fn ) {
+	function partial( fn ) {
 		var args = Array.prototype.slice.apply( arguments );
 		args.shift();
 		return function () { return fn.apply( null, args );};
@@ -56,7 +51,7 @@ var asyncTiny = (function () {
 	function asyncTiny( arg ) {
 		return promiseWrapper.call(
 			this,
-			bind( isArray( arg ) ? asyncBundle : async, arg )
+			partial( isArray( arg ) ? asyncBundle : async, arg )
 		);
 	}
 
